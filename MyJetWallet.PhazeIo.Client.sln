@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyJetWallet.PhazeIo.Client", "src\MyJetWallet.PhazeIo.Client\MyJetWallet.PhazeIo.Client.csproj", "{9B87E6AD-49FC-4C2C-A132-6A0AB6D5CFA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "src\TestApp\TestApp.csproj", "{9F86CF0E-C757-4DAF-B034-46893895C24A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9B87E6AD-49FC-4C2C-A132-6A0AB6D5CFA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B87E6AD-49FC-4C2C-A132-6A0AB6D5CFA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B87E6AD-49FC-4C2C-A132-6A0AB6D5CFA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B87E6AD-49FC-4C2C-A132-6A0AB6D5CFA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F86CF0E-C757-4DAF-B034-46893895C24A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F86CF0E-C757-4DAF-B034-46893895C24A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F86CF0E-C757-4DAF-B034-46893895C24A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F86CF0E-C757-4DAF-B034-46893895C24A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
