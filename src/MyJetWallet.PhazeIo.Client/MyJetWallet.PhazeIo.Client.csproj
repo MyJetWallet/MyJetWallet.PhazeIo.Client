@@ -4,7 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RepositoryUrl>https://github.com/MyJetWallet/MyJetWallet.Domain</RepositoryUrl>
+        <RepositoryUrl>https://github.com/MyJetWallet/MyJetWallet.PhazeIo.Client</RepositoryUrl>
     </PropertyGroup>
 
 </Project>
