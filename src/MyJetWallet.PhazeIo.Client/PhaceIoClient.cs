@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
@@ -7,19 +8,18 @@ using MyJetWallet.PhazeIo.Client.Models;
 
 namespace MyJetWallet.PhazeIo.Client;
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class PhazeIoClient: IDisposable
 {
     private readonly HttpClient _client;
     private readonly ILogger<PhazeIoClient> _logger;
     private readonly string _baseUrl;
-    private readonly string _apiKey;
     private readonly string _apiSecret;
 
     public PhazeIoClient(ILogger<PhazeIoClient> logger, string baseUrl, string apiKey, string apiSecret)
     {
         _logger = logger;
         _baseUrl = baseUrl;
-        _apiKey = apiKey;
         _apiSecret = apiSecret;
 
         if (_baseUrl.EndsWith('/'))
@@ -29,7 +29,7 @@ public class PhazeIoClient: IDisposable
         {
             BaseAddress = new Uri(_baseUrl)
         };
-        _client.DefaultRequestHeaders.Add("API-Key", $"{_apiKey}");
+        _client.DefaultRequestHeaders.Add("API-Key", $"{apiKey}");
     }
 
     public async Task<AccountStatusResponse> GetAccountStatus()
@@ -59,7 +59,7 @@ public class PhazeIoClient: IDisposable
     
     public async Task DeleteWebhook(long webhookId)
     {
-        await DeleteRequest<object>($"/webhooks/{webhookId}", false);
+        await DeleteRequest($"/webhooks/{webhookId}");
     }
 
     public async Task<List<string>> GetBrandsCountries()
@@ -94,12 +94,11 @@ public class PhazeIoClient: IDisposable
             var client = GetClient();
 
             var content = $"GET{path}{_apiSecret}";
-            var signature = HashWithSHA256(content);
+            var signature = HashWithSha256(content);
             
             var url = $"{_baseUrl}{path}";
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
-            //request.Method = HttpMethod.Get;
             request.Headers.Add("Signature", signature);
             
             var response = await client.SendAsync(request);
@@ -107,7 +106,6 @@ public class PhazeIoClient: IDisposable
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                Console.WriteLine($"{path}: {response.StatusCode}\n{responseMessage}");
                 _logger.LogError("Cannot call GET api. Url: {url} Status code: {code}. Response: {response}", url,
                     response.StatusCode, responseMessage);
                 throw new PhazeIoException($"Cannot call GET '{url}'. Status code: {response.StatusCode}");
@@ -139,7 +137,7 @@ public class PhazeIoClient: IDisposable
         }
     }
     
-    private async Task<T1> DeleteRequest<T1>(string path, bool hasRespBody = true)
+    private async Task DeleteRequest(string path)
     {
         _logger.LogInformation("PhazeIo DELETE request to {path}", $"{path}");
 
@@ -148,12 +146,11 @@ public class PhazeIoClient: IDisposable
             var client = GetClient();
 
             var content = $"DELETE{path}{_apiSecret}";
-            var signature = HashWithSHA256(content);
+            var signature = HashWithSha256(content);
             
             var url = $"{_baseUrl}{path}";
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, url);
-            //request.Method = HttpMethod.Get;
             request.Headers.Add("Signature", signature);
             
             var response = await client.SendAsync(request);
@@ -161,29 +158,9 @@ public class PhazeIoClient: IDisposable
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                Console.WriteLine($"{path}: {response.StatusCode}\n{responseMessage}");
                 _logger.LogError("Cannot call DELETE api. Url: {url} Status code: {code}. Response: {response}", url,
                     response.StatusCode, responseMessage);
                 throw new PhazeIoException($"Cannot call DELETE '{url}'. Status code: {response.StatusCode}");
-            }
-            
-            if (!hasRespBody)
-                return default;
-
-            try
-            {
-                var data = JsonSerializer.Deserialize<T1>(responseMessage, new JsonSerializerOptions()
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                });
-                return data;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e,
-                    "Cannot deserialize response. Url: DELETE {url} Status code: {code}. Response: {response}",
-                    url, response.StatusCode, responseMessage);
-                throw new PhazeIoException($"Cannot call DELETE '{url}'. Can't deserialize response");
             }
         }
         catch (PhazeIoException)
@@ -211,7 +188,7 @@ public class PhazeIoClient: IDisposable
             request.Content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
             
             var content = $"POST{path}{_apiSecret}{reqContent.ReadAsStringAsync().Result}";
-            var signature = HashWithSHA256(content);
+            var signature = HashWithSha256(content);
             
             request.Headers.Add("Signature", signature);
             
@@ -220,7 +197,6 @@ public class PhazeIoClient: IDisposable
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                Console.WriteLine($"{path}: {response.StatusCode}\n{responseMessage}");
                 _logger.LogError("Cannot call api. Url: POST {url} Status code: {code}. Response: {response}", url,
                     response.StatusCode, responseMessage);
                 throw new PhazeIoException($"Cannot call POST '{url}'. Status code: {response.StatusCode}");
@@ -248,8 +224,8 @@ public class PhazeIoClient: IDisposable
             throw new PhazeIoException($"Cannot call POST '{path}'.", e);
         }
     }
-    
-    public static string HashWithSHA256(string value)
+
+    private static string HashWithSha256(string value)
     {
         using var hash = SHA256.Create();
         var byteArray = hash.ComputeHash(Encoding.UTF8.GetBytes(value));
