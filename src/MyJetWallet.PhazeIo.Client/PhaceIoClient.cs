@@ -79,6 +79,24 @@ public class PhazeIoClient: IDisposable
         var resp = await GetRequest<CardBrand>($"/brands/{productId}");
         return resp;
     }
+    
+    public async Task<PurchaseCardResponse> PurchaseCard(PurchaseCardRequest request)
+    {
+        var resp = await PostRequest<PurchaseCardRequest, PurchaseCardResponse>("/purchase", request);
+        return resp;
+    }
+    
+    public async Task<PurchaseCardRecord> GetPurchaseCardByOrderId(string orderId)
+    {
+        var resp = await GetRequest<PurchaseCardRecord>($"/transaction/{orderId}");
+        return resp;
+    }
+    
+    public async Task<GetPurchaseCardRecordListResponse> GetPurchaseCardList(int page, int perPage)
+    {
+        var resp = await GetRequest<GetPurchaseCardRecordListResponse>($"/transactions?currentPage={page}&perPage={perPage}");
+        return resp;
+    }
 
     private HttpClient GetClient()
     {
@@ -197,9 +215,10 @@ public class PhazeIoClient: IDisposable
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
+                var error = TryParseError(responseMessage);
                 _logger.LogError("Cannot call api. Url: POST {url} Status code: {code}. Response: {response}", url,
                     response.StatusCode, responseMessage);
-                throw new PhazeIoException($"Cannot call POST '{url}'. Status code: {response.StatusCode}");
+                throw new PhazeIoException($"Cannot call POST '{url}'. Status code: {response.StatusCode}: Error: {error?.Error}");
             }
 
             try
@@ -225,6 +244,18 @@ public class PhazeIoClient: IDisposable
         }
     }
 
+    private ErrorBody TryParseError(string content)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<ErrorBody>(content);
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
+    
     private static string HashWithSha256(string value)
     {
         using var hash = SHA256.Create();

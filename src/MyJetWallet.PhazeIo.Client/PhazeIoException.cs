@@ -13,5 +13,8 @@ namespace MyJetWallet.PhazeIo.Client
         public PhazeIoException(string message, Exception innerException) : base(message, innerException)
         {
         }
+        
+        public string ErrorString { get; set; }
+        public int HttpStatusCode { get; set; }
     }
 }
