@@ -12,11 +12,11 @@ namespace MyJetWallet.PhazeIo.Client;
 public class PhazeIoClient: IDisposable
 {
     private readonly HttpClient _client;
-    private readonly ILogger<PhazeIoClient> _logger;
+    private readonly ILogger _logger;
     private readonly string _baseUrl;
     private readonly string _apiSecret;
 
-    public PhazeIoClient(ILogger<PhazeIoClient> logger, string baseUrl, string apiKey, string apiSecret)
+    public PhazeIoClient(ILogger logger, string baseUrl, string apiKey, string apiSecret)
     {
         _logger = logger;
         _baseUrl = baseUrl;
@@ -70,12 +70,14 @@ public class PhazeIoClient: IDisposable
     
     public async Task<CardBrandListResponse> GetBrandsByCountry(string country, int page)
     {
+        //todo: optional &foreignCurrency=USD ..... {{baseUrl}}/brands/country/:country?currentPage=1&foreignCurrency=USD
         var resp = await GetRequest<CardBrandListResponse>($"/brands/country/{country}?currentPage={page}");
         return resp;
     }
     
     public async Task<CardBrand> GetBrandsByProductId(long productId)
     {
+        //todo: {{baseUrl}}/brands/:id?currency=USD
         var resp = await GetRequest<CardBrand>($"/brands/{productId}");
         return resp;
     }
