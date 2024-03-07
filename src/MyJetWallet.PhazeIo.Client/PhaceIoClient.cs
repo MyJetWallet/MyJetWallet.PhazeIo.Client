@@ -68,17 +68,29 @@ public class PhazeIoClient: IDisposable
         return resp;
     }
     
-    public async Task<CardBrandListResponse> GetBrandsByCountry(string country, int page)
+    public async Task<CardBrandListResponse> GetBrandsByCountry(string country, int page, string foreignCurrency = "")
     {
-        //todo: optional &foreignCurrency=USD ..... {{baseUrl}}/brands/country/:country?currentPage=1&foreignCurrency=USD
-        var resp = await GetRequest<CardBrandListResponse>($"/brands/country/{country}?currentPage={page}");
+        var path = $"/brands/country/{country}?currentPage={page}";
+
+        if (!string.IsNullOrEmpty(foreignCurrency))
+        {
+            path += $"&foreignCurrency={foreignCurrency}";
+        }   
+        
+        var resp = await GetRequest<CardBrandListResponse>(path);
         return resp;
     }
     
-    public async Task<CardBrand> GetBrandsByProductId(long productId)
+    public async Task<CardBrand> GetBrandsByProductId(long productId, string currency = "")
     {
-        //todo: {{baseUrl}}/brands/:id?currency=USD
-        var resp = await GetRequest<CardBrand>($"/brands/{productId}");
+        var path = $"/brands/{productId}";
+
+        if (!string.IsNullOrEmpty(currency))
+        {
+            path += $"?currency={currency}";
+        }   
+        
+        var resp = await GetRequest<CardBrand>(path);
         return resp;
     }
     
