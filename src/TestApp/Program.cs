@@ -21,8 +21,8 @@ Console.WriteLine(accountStatus.Account.BalanceAsDecimal().ToString(CultureInfo.
 //Console.WriteLine($"Add Webhook: \n {JsonSerializer.Serialize(addWebhookResp, new JsonSerializerOptions() { WriteIndented = true })}");
 //await client.DeleteWebhook(addWebhookResp.Id);
 
-var webhookList = await client.GetWebhookList();
-Console.WriteLine($"Webhook list: \n {JsonSerializer.Serialize(webhookList, new JsonSerializerOptions() { WriteIndented = true })}");
+// var webhookList = await client.GetWebhookList();
+// Console.WriteLine($"Webhook list: \n {JsonSerializer.Serialize(webhookList, new JsonSerializerOptions() { WriteIndented = true })}");
 
 // var counries = await client.GetBrandsCountries();
 // Console.WriteLine($"Brands countries: \n {JsonSerializer.Serialize(counries, new JsonSerializerOptions() { WriteIndented = true })}");
@@ -46,11 +46,12 @@ Console.WriteLine($"Webhook list: \n {JsonSerializer.Serialize(webhookList, new 
 // Console.WriteLine();
 // Console.WriteLine();
 //
-// var singleBrand = await client.GetBrandsByProductId(103162358333);
-// Console.WriteLine($"Brand: \n {JsonSerializer.Serialize(singleBrand, new JsonSerializerOptions() { WriteIndented = true })}");
+var singleBrand = await client.GetBrandsByProductId(103102207337);
+Console.WriteLine($"Brand: \n {JsonSerializer.Serialize(singleBrand, new JsonSerializerOptions() { WriteIndented = true })}");
 
 Console.WriteLine();
 Console.WriteLine();
+Console.ReadLine();
 
 // var orderId = Guid.NewGuid().ToString();
 // Console.WriteLine(orderId);
@@ -75,7 +76,43 @@ Console.WriteLine();
 // Console.WriteLine("Purchase record: \n" + JsonSerializer.Serialize(purchaseRecord, new JsonSerializerOptions() { WriteIndented = true }));
 // Console.WriteLine(purchaseRecord.VoucherUrl);
 
-var purchaseList = await client.GetPurchaseCardList(1, 10);
-Console.WriteLine("Purchase list: \n" + JsonSerializer.Serialize(purchaseList, new JsonSerializerOptions() { WriteIndented = true }));
+//var purchaseList = await client.GetPurchaseCardList(1, 10);
+//Console.WriteLine("Purchase list: \n" + JsonSerializer.Serialize(purchaseList, new JsonSerializerOptions() { WriteIndented = true }));
 
+var countries = await client.GetBrandsCountries();
+Dictionary<string, List<String>> brandNames = new Dictionary<string, List<string>>();
+foreach (var country in countries)
+{
+    var names = new List<string>();
+    CardBrandListResponse data;
+    var page = 1;
+    do
+    {
+        data = await client.GetBrandsByCountry(country, page);
+        var res = data.Brands ?? new List<CardBrand>();
+        var resSelector = res.AsEnumerable();
+        resSelector = resSelector.Where(e => e.BrandName.Contains("USD Mobile Wallet (Virtual only)"));
+        //resSelector = resSelector.Where(e => e.BrandName.ToUpper().Contains("VISA") || e.BrandName.ToUpper().Contains("MASTERCARD"));
+        resSelector = resSelector.Where(e => e.BrandName.ToUpper().Contains("MOBILE WALLET"));
+        names.AddRange(resSelector.Select(e => $"{e.BrandName}  ({e.ProductId})"));
+        page++;
+    } while( data.Brands?.Any() == true);
+
+    if (names.Any())
+        brandNames[country] = names;
+    Console.WriteLine($"{country}\t{names.Count}");
+}
+
+foreach (var pair in brandNames)
+{
+    foreach (var brand in pair.Value)
+    {
+        Console.WriteLine($"{pair.Key}\t{brand}");
+    }
+    Console.WriteLine();
+}
+
+Console.WriteLine();
+Console.WriteLine("Press enter to exit");
+Console.ReadLine();
 

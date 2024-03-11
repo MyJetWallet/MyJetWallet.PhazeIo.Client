@@ -21,10 +21,12 @@ public class CardBrand
     [DataMember(Order = 12), JsonPropertyName("expiryAndValidity")] public string ExpiryAndValidity { get; set; }
     [DataMember(Order = 13), JsonPropertyName("discount")] public decimal Discount { get; set; }
     
-    [DataContract]
-    public class ValueRestrictionsModel
-    {
-        [DataMember(Order = 1), JsonPropertyName("MaxVal")] public decimal? MaxVal { get; set; }
-        [DataMember(Order = 2), JsonPropertyName("MinVal")] public decimal? MinVal { get; set; }
-    }
+    
+}
+
+[DataContract]
+public class ValueRestrictionsModel
+{
+    [DataMember(Order = 1), JsonPropertyName("maxVal")] public decimal MaxVal { get; set; }
+    [DataMember(Order = 2), JsonPropertyName("minVal")] public decimal MinVal { get; set; }
 }
