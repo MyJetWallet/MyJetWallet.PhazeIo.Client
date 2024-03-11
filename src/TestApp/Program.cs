@@ -46,13 +46,14 @@ Console.WriteLine(accountStatus.Account.BalanceAsDecimal().ToString(CultureInfo.
 // Console.WriteLine();
 // Console.WriteLine();
 //
-var singleBrand = await client.GetBrandsByProductId(103102207337);
-Console.WriteLine($"Brand: \n {JsonSerializer.Serialize(singleBrand, new JsonSerializerOptions() { WriteIndented = true })}");
+// var singleBrand = await client.GetBrandsByProductId(103102207337);
+// Console.WriteLine($"Brand: \n {JsonSerializer.Serialize(singleBrand, new JsonSerializerOptions() { WriteIndented = true })}");
 
 Console.WriteLine();
 Console.WriteLine();
 Console.ReadLine();
 
+var orderId = "99a9514d-5d8d-4597-a633-4e4b398ae94e";
 // var orderId = Guid.NewGuid().ToString();
 // Console.WriteLine(orderId);
 //
@@ -67,8 +68,9 @@ Console.ReadLine();
 // Console.WriteLine("Purchase: \n" + JsonSerializer.Serialize(orderPurchase, new JsonSerializerOptions() { WriteIndented = true }));
 //
 // Console.WriteLine();
-// var purchaseRecord = await client.GetPurchaseCardByOrderId(orderId);
-// Console.WriteLine("Purchase record: \n" + JsonSerializer.Serialize(purchaseRecord, new JsonSerializerOptions() { WriteIndented = true }));
+ var purchaseRecord = await client.GetPurchaseCardByOrderId(orderId);
+ Console.WriteLine("Purchase record: \n" + JsonSerializer.Serialize(purchaseRecord, new JsonSerializerOptions() { WriteIndented = true }));
+ return;
 //
 // Console.ReadLine();
 // Console.WriteLine();
