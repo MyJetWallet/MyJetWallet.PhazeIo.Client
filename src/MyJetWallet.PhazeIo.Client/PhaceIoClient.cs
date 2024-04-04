@@ -96,6 +96,9 @@ public class PhazeIoClient: IDisposable
     
     public async Task<PurchaseCardResponse> PurchaseCard(PurchaseCardRequest request)
     {
+        if (request.Price == Math.Round(request.Price, 0))
+            request.Price = Math.Round(request.Price, 0);
+        
         var resp = await PostRequest<PurchaseCardRequest, PurchaseCardResponse>("/purchase", request);
         return resp;
     }
@@ -215,9 +218,11 @@ public class PhazeIoClient: IDisposable
             
             var url = $"{_baseUrl}{path}";
 
-            var reqContent = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
+            var json = JsonSerializer.Serialize(requestBody);
+            
+            var reqContent = new StringContent(json, Encoding.UTF8, "application/json");
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
-            request.Content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
+            request.Content = reqContent;//new StringContent(json, Encoding.UTF8, "application/json");
             
             var content = $"POST{path}{_apiSecret}{reqContent.ReadAsStringAsync().Result}";
             var signature = HashWithSha256(content);

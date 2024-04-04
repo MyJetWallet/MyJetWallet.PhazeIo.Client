@@ -51,23 +51,23 @@ Console.WriteLine(accountStatus.Account.BalanceAsDecimal().ToString(CultureInfo.
 
 Console.WriteLine();
 Console.WriteLine();
-Console.ReadLine();
+//Console.ReadLine();
 
-var orderId = "99a9514d-5d8d-4597-a633-4e4b398ae94e";
-// var orderId = Guid.NewGuid().ToString();
-// Console.WriteLine(orderId);
-//
-// var orderPurchase = await client.PurchaseCard(new PurchaseCardRequest()
-// {
-//     ProductId = 103162207337,
-//     ExternalUserId = "test_001",
-//     Price = 5,
-//     OrderId = orderId
-// });
-//
-// Console.WriteLine("Purchase: \n" + JsonSerializer.Serialize(orderPurchase, new JsonSerializerOptions() { WriteIndented = true }));
-//
-// Console.WriteLine();
+//var orderId = "99a9514d-5d8d-4597-a633-4e4b398ae94e";
+ var orderId = Guid.NewGuid().ToString();
+ Console.WriteLine(orderId);
+
+var orderPurchase = await client.PurchaseCard(new PurchaseCardRequest()
+{
+    ProductId = 103130906725,
+    ExternalUserId = "SP-8802cd7f71cb47b593a15c0f1fa5bf7b",
+    Price = 10m,
+    OrderId = orderId
+});
+
+Console.WriteLine("Purchase: \n" + JsonSerializer.Serialize(orderPurchase, new JsonSerializerOptions() { WriteIndented = true }));
+
+Console.WriteLine();
  var purchaseRecord = await client.GetPurchaseCardByOrderId(orderId);
  Console.WriteLine("Purchase record: \n" + JsonSerializer.Serialize(purchaseRecord, new JsonSerializerOptions() { WriteIndented = true }));
  return;
@@ -81,40 +81,40 @@ var orderId = "99a9514d-5d8d-4597-a633-4e4b398ae94e";
 //var purchaseList = await client.GetPurchaseCardList(1, 10);
 //Console.WriteLine("Purchase list: \n" + JsonSerializer.Serialize(purchaseList, new JsonSerializerOptions() { WriteIndented = true }));
 
-var countries = await client.GetBrandsCountries();
-Dictionary<string, List<String>> brandNames = new Dictionary<string, List<string>>();
-foreach (var country in countries)
-{
-    var names = new List<string>();
-    CardBrandListResponse data;
-    var page = 1;
-    do
-    {
-        data = await client.GetBrandsByCountry(country, page);
-        var res = data.Brands ?? new List<CardBrand>();
-        var resSelector = res.AsEnumerable();
-        resSelector = resSelector.Where(e => e.BrandName.Contains("USD Mobile Wallet (Virtual only)"));
-        //resSelector = resSelector.Where(e => e.BrandName.ToUpper().Contains("VISA") || e.BrandName.ToUpper().Contains("MASTERCARD"));
-        resSelector = resSelector.Where(e => e.BrandName.ToUpper().Contains("MOBILE WALLET"));
-        names.AddRange(resSelector.Select(e => $"{e.BrandName}  ({e.ProductId})"));
-        page++;
-    } while( data.Brands?.Any() == true);
-
-    if (names.Any())
-        brandNames[country] = names;
-    Console.WriteLine($"{country}\t{names.Count}");
-}
-
-foreach (var pair in brandNames)
-{
-    foreach (var brand in pair.Value)
-    {
-        Console.WriteLine($"{pair.Key}\t{brand}");
-    }
-    Console.WriteLine();
-}
-
-Console.WriteLine();
-Console.WriteLine("Press enter to exit");
-Console.ReadLine();
+// var countries = await client.GetBrandsCountries();
+// Dictionary<string, List<String>> brandNames = new Dictionary<string, List<string>>();
+// foreach (var country in countries)
+// {
+//     var names = new List<string>();
+//     CardBrandListResponse data;
+//     var page = 1;
+//     do
+//     {
+//         data = await client.GetBrandsByCountry(country, page);
+//         var res = data.Brands ?? new List<CardBrand>();
+//         var resSelector = res.AsEnumerable();
+//         resSelector = resSelector.Where(e => e.BrandName.Contains("USD Mobile Wallet (Virtual only)"));
+//         //resSelector = resSelector.Where(e => e.BrandName.ToUpper().Contains("VISA") || e.BrandName.ToUpper().Contains("MASTERCARD"));
+//         resSelector = resSelector.Where(e => e.BrandName.ToUpper().Contains("MOBILE WALLET"));
+//         names.AddRange(resSelector.Select(e => $"{e.BrandName}  ({e.ProductId})"));
+//         page++;
+//     } while( data.Brands?.Any() == true);
+//
+//     if (names.Any())
+//         brandNames[country] = names;
+//     Console.WriteLine($"{country}\t{names.Count}");
+// }
+//
+// foreach (var pair in brandNames)
+// {
+//     foreach (var brand in pair.Value)
+//     {
+//         Console.WriteLine($"{pair.Key}\t{brand}");
+//     }
+//     Console.WriteLine();
+// }
+//
+// Console.WriteLine();
+// Console.WriteLine("Press enter to exit");
+// Console.ReadLine();
 
